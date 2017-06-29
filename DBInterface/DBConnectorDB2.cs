@@ -1,20 +1,16 @@
-﻿using System;
+﻿using IBM.Data.DB2;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
-using System.Runtime.CompilerServices;
 using System.Diagnostics;
-using IBM.Data.DB2;
-using IBM.Data.DB2Types;
+using System.Runtime.CompilerServices;
 
 namespace DBInterface
 {
-    /// <summary>
-    /// Public class that enables connection to an DB2 SQL data base and execute commands.
-    /// </summary>
-    public class DBConnectorDB2: IDisposable
+	/// <summary>
+	/// Public class that enables connection to an DB2 SQL data base and execute commands.
+	/// </summary>
+	public class DBConnectorDB2: IDisposable
     {
         private DB2ConnectionStringBuilder connectionString;
         private List<DB2Parameter> Parameters { get; set; }
@@ -34,37 +30,33 @@ namespace DBInterface
         /// </summary>
         public List<Error> ErrorList { get; private set; }
 
-        /// <summary>
-        /// Main constructor
-        /// </summary>
-        /// <param name="dataSource">Server name</param>
-        /// <param name="initialCatalog">Data base name</param>
-        /// <param name="userId">User Id</param>
-        /// <param name="passWord">Password</param>
-        /// <param name="persistSecurityInfo">Whether to keep password in memory or not</param>
-        /// <param name="queryTimeout">Time in seconds for query execution time before a timeout exception</param>
-        /// <param name="connectionTimeOut">Time in seconds for connection time before a timeout exception</param>
-        public DBConnectorDB2(string dataSource, string initialCatalog, string userId, string passWord, 
-                                bool persistSecurityInfo, int queryTimeout, int connectionTimeOut)
-        {
-            connectionString = new DB2ConnectionStringBuilder();
-            connectionString.Database = initialCatalog;
-            connectionString.allowDynamicSQL = true;
-            connectionString.QueryTimeout = queryTimeout;
-            connectionString.Server = dataSource;            
-            connectionString.UserID = userId;
-            connectionString.Password = passWord;            
-            connectionString.PersistSecurityInfo = persistSecurityInfo;
-            connectionString.Connect_Timeout = connectionTimeOut;
-            Parameters = new List<DB2Parameter>();
-            ErrorList = new List<Error>();
-        }
+		/// <summary>
+		/// Main constructor
+		/// </summary>
+		/// <param name="serverName">Server name (host name).</param>
+		/// <param name="portNumber">Port number where the database can be accessed to.</param>
+		/// <param name="userId">User Id.</param>
+		/// <param name="passWord">Password.</param>
+		/// <param name="databaseName">Name of the dabase to connect to.</param>
+		public DBConnectorDB2(string serverName, int portNumber, string userId, string passWord, string databaseName)
+		{
+			connectionString = new DB2ConnectionStringBuilder()
+			{
+				Database = databaseName,
+				Server = string.Concat(serverName,":",portNumber.ToString()),
+				PersistSecurityInfo = true,
+				UserID = userId,
+				Password = passWord
+			};
+			Parameters = new List<DB2Parameter>();
+			ErrorList = new List<Error>();
+		}
 
-        /// <summary>
-        /// Main constructor
-        /// </summary>
-        /// <param name="connString">A connection string to the database</param>
-        public DBConnectorDB2(string connString)
+		/// <summary>
+		/// Main constructor
+		/// </summary>
+		/// <param name="connString">A connection string to the database</param>
+		public DBConnectorDB2(string connString)
         {
             connectionString = new DB2ConnectionStringBuilder(connString);
             Parameters = new List<DB2Parameter>();

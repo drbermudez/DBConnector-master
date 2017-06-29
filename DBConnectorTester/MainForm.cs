@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DBInterface;
+using System;
 using System.Windows.Forms;
-using DBInterface;
 
 namespace DBConnectorTester
 {
-    public partial class frmMain : Form
+	public partial class frmMain : Form
     {
         private bool integratedSecurity = false;
 
         public frmMain()
         {
             InitializeComponent();
-            cmbPersist.SelectedIndex = 0;
+			cmbPersist.SelectedIndex = 0;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (cmbDriver.SelectedIndex == 0)
             {
-                DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, @txtDBName.Text, @txtUsername.Text, txtPassword.Text,
-                                                    Convert.ToBoolean(cmbPersist.SelectedItem), 40, 40);
+                DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text);
                 if (conn.CanConnect())
                 {
                     MessageBox.Show("Connection successful!");
@@ -134,5 +126,13 @@ namespace DBConnectorTester
         {           
             btnConnect.Enabled = Convert.ToBoolean(cmbDriver.SelectedIndex >= 0);
         }
-    }
+
+		private void txtPortNum_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (!char.IsDigit(e.KeyChar) && e.KeyChar != Convert.ToChar(Keys.Back))
+			{
+				e.Handled = true;
+			}
+		}
+	}
 }
