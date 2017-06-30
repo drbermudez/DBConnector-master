@@ -14,24 +14,39 @@ namespace DBConnectorTester
 			cmbPersist.SelectedIndex = 0;
         }
 
+		private void CreateQueryForDB2()
+		{
+			DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text, chkIntegrated.Checked);
+
+			if (conn.CanConnect())
+			{
+				conn.LoadTable("select * from Drugs", System.Data.CommandType.Text);
+				if(conn.Table.Rows.Count > 0)
+				{
+					Console.WriteLine(string.Format("I found this information: {0}, {1}, {2}", conn.Table.Rows[0]["DrugKey"], conn.Table.Rows[0]["DrugName"], conn.Table.Rows[0]["Quantity"]));
+				}
+			}
+		}
+
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (cmbDriver.SelectedIndex == 0)
             {
-                DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text);
-                if (conn.CanConnect())
-                {
-                    MessageBox.Show("Connection successful!");
-                }
-                else
-                {
-                    string tmpMessage = "";
-                    foreach (Error error in conn.ErrorList)
-                    {
-                        tmpMessage += error.Message + " " + error.RoutineName + Environment.NewLine;
-                    }
-                    MessageBox.Show(tmpMessage);
-                }
+				CreateQueryForDB2();
+                //DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text, chkIntegrated.Checked);
+                //if (conn.CanConnect())
+                //{
+                //    MessageBox.Show("Connection successful!");
+                //}
+                //else
+                //{
+                //    string tmpMessage = "";
+                //    foreach (Error error in conn.ErrorList)
+                //    {
+                //        tmpMessage += error.Message + " " + error.RoutineName + Environment.NewLine;
+                //    }
+                //    MessageBox.Show(tmpMessage);
+                //}
             }
             else if (cmbDriver.SelectedIndex == 1)
             {

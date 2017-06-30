@@ -38,13 +38,14 @@ namespace DBInterface
 		/// <param name="userId">User Id.</param>
 		/// <param name="passWord">Password.</param>
 		/// <param name="databaseName">Name of the dabase to connect to.</param>
-		public DBConnectorDB2(string serverName, int portNumber, string userId, string passWord, string databaseName)
+		/// <param name="persistSecurityInfo">Persist security information</param>
+		public DBConnectorDB2(string serverName, int portNumber, string userId, string passWord, string databaseName, bool persistSecurityInfo)
 		{
 			connectionString = new DB2ConnectionStringBuilder()
 			{
 				Database = databaseName,
 				Server = string.Concat(serverName,":",portNumber.ToString()),
-				PersistSecurityInfo = true,
+				PersistSecurityInfo = persistSecurityInfo,
 				UserID = userId,
 				Password = passWord
 			};
@@ -311,14 +312,23 @@ namespace DBInterface
                         cmd.Connection.Open();
 
                         DB2DataReader reader = null;
-                        reader = cmd.ExecuteReader(CommandBehavior.KeyInfo);
+						reader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-                        resultSet.Load(reader);
+						while(reader.Read())
+						{
+							resultSet.Load(reader);
+						}
+                        
                         reader.Close();
                         cmd.Connection.Close();
                     }
                 }
             }
+			catch(DB2Exception db2Ex)
+			{
+				Error aError = new Error(db2Ex.Source, db2Ex.Message, GetCurrentMethod());
+				ErrorList.Add(aError);
+			}
             catch (Exception ex)
             {
                 Error aError = new Error(ex.Source, ex.Message, GetCurrentMethod());
