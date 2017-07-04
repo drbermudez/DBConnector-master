@@ -32,22 +32,21 @@ namespace DBConnectorTester
         {
             if (cmbDriver.SelectedIndex == 0)
             {
-				CreateQueryForDB2();
-                //DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text, chkIntegrated.Checked);
-                //if (conn.CanConnect())
-                //{
-                //    MessageBox.Show("Connection successful!");
-                //}
-                //else
-                //{
-                //    string tmpMessage = "";
-                //    foreach (Error error in conn.ErrorList)
-                //    {
-                //        tmpMessage += error.Message + " " + error.RoutineName + Environment.NewLine;
-                //    }
-                //    MessageBox.Show(tmpMessage);
-                //}
-            }
+				DBConnectorDB2 conn = new DBConnectorDB2(@txtServer.Text, int.Parse(txtPortNum.Text), @txtUsername.Text, @txtPassword.Text, txtDBName.Text, chkIntegrated.Checked);
+				if (conn.CanConnect())
+				{
+					MessageBox.Show("Connection successful!");
+				}
+				else
+				{
+					string tmpMessage = "";
+					foreach (Error error in conn.ErrorList)
+					{
+						tmpMessage += error.Message + " " + error.RoutineName + Environment.NewLine;
+					}
+					MessageBox.Show(tmpMessage);
+				}
+			}
             else if (cmbDriver.SelectedIndex == 1)
             {
                 DBConnectorOracle conn = new DBConnectorOracle(@txtServer.Text, @txtDBName.Text, @txtUsername.Text, txtPassword.Text,
